@@ -11,6 +11,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { ChevronDown, ChevronRight, FileText, GripVertical, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { toast } from "sonner";
 
 interface iAppProps {
     data: AdminCourseSingularType
@@ -63,18 +64,63 @@ export function CourseStructure({ data }: iAppProps) {
         );
       };
 
-      function handleDragEnd(event) {
+    function handleDragEnd(event) {
         const {active, over} = event;
+        const activeId = active.id;
+        const overId = over.id;
+        const activeType = active.data.current?.type as "chapter" | "lesson";
+        const overType = over.data.current?.type as "chapter" | "lesson";
+        const courseId = data.id;
         
-        if (active.id !== over.id) {
-          setItems((items) => {
-            const oldIndex = items.indexOf(active.id);
-            const newIndex = items.indexOf(over.id);
+        if (!over || activeId === overId) {
+            return;
+        }
+
+        if (activeType === "chapter") {
+            let targetChapterId = null;
+
+            if(overType === "chapter") {
+                targetChapterId = overId;
+            } else if (overType === 'lesson') {
+                targetChapterId = over.data.current?.chapterId ?? null;
+            }
+
+            if(!targetChapterId) {
+                toast.error('Could not determine the chapter for reordering');
+                return;
+            }
+
+            const oldIndex = items.findIndex((item) => item.id === activeId);
+            const newIndex = items.findIndex((item) => item.id === targetChapterId);
+
+            if(oldIndex === -1 || newIndex === -1) {
+                toast.error('Could not determine the chapter for reordering');
+                return;
+            }
+
+            const reorderedLocalChapters = arrayMove(items, oldIndex, newIndex);
+            const updatedChapterForState = reorderedLocalChapters.map((chapter, index) => ({
+                ...chapter,
+                order: index + 1,
+            })
+        );
+
+        const previousItems = [...items];
+        setItems(updatedChapterForState);
+        }
+
+        if (activeType === "lesson" && overType === "lesson") {
+            const chapterId = active.data.current?.chapterId;
+            const overChapterId = over.data.current?.chapterId;
+
+            if(!chapterId || chapterId !== overChapterId) {
+                toast.error('Lesson move between Chapters or invalid Chapter ID is not allowed');
+                return;
+            }
+
             
-            return arrayMove(items, oldIndex, newIndex);
-          });
-        };
-      };
+        }
+    };
 
     function toggleChapter(chapterId: string) {
         setItems(
