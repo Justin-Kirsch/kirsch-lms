@@ -14,6 +14,7 @@ import Link from "next/link";
 import { toast } from "sonner";
 import { reorderChapters, reorderLessons } from "../actions";
 import { resourceLimits } from "worker_threads";
+import { NewChapterModal } from "./NewChapterModal";
 
 interface iAppProps {
     data: AdminCourseSingularType
@@ -246,6 +247,7 @@ export function CourseStructure({ data }: iAppProps) {
                     <CardTitle>
                         Chapters
                     </CardTitle>
+                    <NewChapterModal courseId={data.id}/>
                 </CardHeader>
                 <CardContent className="space-y-8">
                     <SortableContext strategy={verticalListSortingStrategy} items={items} >
