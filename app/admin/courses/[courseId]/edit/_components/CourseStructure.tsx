@@ -15,6 +15,7 @@ import { toast } from "sonner";
 import { reorderChapters, reorderLessons } from "../actions";
 import { resourceLimits } from "worker_threads";
 import { NewChapterModal } from "./NewChapterModal";
+import { NewLessonModal } from "./NewLessonModal";
 
 interface iAppProps {
     data: AdminCourseSingularType
@@ -314,7 +315,10 @@ export function CourseStructure({ data }: iAppProps) {
                                                         ))}
                                                     </SortableContext>
                                                     <div className="p-2">
-                                                        <Button variant="outline" className="w-full">Create new Lesson</Button>
+                                                        <NewLessonModal 
+                                                            chapterId={item.id} 
+                                                            courseId={data.id}
+                                                        />
                                                     </div>
                                                 </div>
                                             </CollapsibleContent>
