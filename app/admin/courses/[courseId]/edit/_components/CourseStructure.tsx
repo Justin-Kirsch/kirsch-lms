@@ -13,9 +13,10 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { toast } from "sonner";
 import { reorderChapters, reorderLessons } from "../actions";
-import { resourceLimits } from "worker_threads";
 import { NewChapterModal } from "./NewChapterModal";
 import { NewLessonModal } from "./NewLessonModal";
+import { DeleteLesson } from "./DeleteLesson";
+import { DeleteChapter } from "./DeleteChapter";
 
 interface iAppProps {
     data: AdminCourseSingularType
@@ -277,9 +278,7 @@ export function CourseStructure({ data }: iAppProps) {
                                                     </CollapsibleTrigger>
                                                     <p className="cursor-pointer hover:text-primary pl-2">{item.title}</p>
                                                 </div>
-                                                <Button size="icon" variant="outline">
-                                                    <Trash2 className="size-4"/>
-                                                </Button>
+                                                <DeleteChapter chapterId={item.id} courseId={data.id} />
                                             </div>
                                             <CollapsibleContent>
                                                 <div className="p-1">
@@ -305,9 +304,7 @@ export function CourseStructure({ data }: iAppProps) {
                                                                             </Link>
                                                                         </div>       
 
-                                                                        <Button size="icon" variant="outline">
-                                                                            <Trash2 className="size-4"/>
-                                                                        </Button>                                       
+                                                                        <DeleteLesson chapterId={item.id} courseId={data.id} lessonId={lesson.id} />
                                                                     </div>
                                                                 )}
                                                                 
